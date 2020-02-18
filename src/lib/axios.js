@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { message } from 'ant-design-vue'
 
 //请求拦截器
 axios.interceptors.request.use(
@@ -27,7 +28,11 @@ axios.interceptors.response.use(function (response) {
       case 401:
         // 返回 401 清除token信息并跳转到登录页面
         localStorage.removeItem("x-auth-token")
-        location.reload()
+        setTimeout(() => {
+          message.info('登录失效,正在刷新页面', 0);
+          location.reload()
+        }, 1500);
+
     }
   }
   return Promise.reject(error);
