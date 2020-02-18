@@ -8,7 +8,7 @@ module.exports = {
         'lib': "@/lib",
         'view': "@/view",
         'api': "@/api",
-        'mock': "@/mock",
+        'middleware': "@/middleware",
         'components': "@/components",
         'assets': "@/assets",
         'config': "@/config"
@@ -26,6 +26,13 @@ module.exports = {
   },
   //开发服务器设置
   devServer: {
-
+    proxy: {
+      '/api': {
+        /* 目标代理服务器地址 */
+        target: 'http://localhost:8888/',
+        /* 允许跨域 */
+        changeOrigin: true
+      }
+    }
   }
 }

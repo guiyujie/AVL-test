@@ -1,6 +1,7 @@
 <template>
-  <div class="head">I'm a user {{user.name}}</div>
+  <div class="head">I'm a login page,auto login.</div>
 </template>
+
 
 <script>
 import { mapState } from "vuex";
@@ -8,9 +9,11 @@ import { mapState } from "vuex";
 export default {
   created() {
     //namespace
+    this.$store.dispatch("user/login");
   },
   computed: mapState({
     user: state => {
+      console.log(state);
       return state.user;
     }
   })

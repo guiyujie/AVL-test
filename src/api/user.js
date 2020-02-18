@@ -2,7 +2,7 @@ import axios from 'lib/axios'
 
 export default {
   async login() {
-    let res = await axios.get("/mock/user.json", {
+    let res = await axios.get("/api/user/login", {
       params: {}
     })
     return res

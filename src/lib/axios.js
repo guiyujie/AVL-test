@@ -15,10 +15,21 @@ axios.interceptors.request.use(
 
 // 响应拦截器
 axios.interceptors.response.use(function (response) {
-  // Do something with response data
+  //获取更新的token
+  const { authorization } = response.headers;
+  //如果token存在则存在localStorage
+  authorization && localStorage.setItem('x-auth-token', authorization);
   return response;
 }, function (error) {
   // Do something with response error
+  if (error.response) {
+    switch (error.response.status) {
+      case 401:
+        // 返回 401 清除token信息并跳转到登录页面
+        localStorage.removeItem("x-auth-token")
+        location.reload()
+    }
+  }
   return Promise.reject(error);
 });
 
