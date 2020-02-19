@@ -13,7 +13,6 @@ export default {
   },
   computed: mapState({
     user: state => {
-      console.log(state);
       return state.user;
     }
   })

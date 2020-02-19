@@ -1,4 +1,4 @@
-import { user } from 'api/index'
+import api from 'api/index'
 
 
 // state
@@ -14,7 +14,7 @@ const getters = {
 // actions
 const actions = {
   async login({ commit }, data) {
-    let res = await user.login(data)
+    let res = await api.user.login(data)
     commit('login', res)
   }
 }

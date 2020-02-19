@@ -1,13 +1,13 @@
 <template>
   <div class="body">
     <div class="side">
-      <Side onsubmit="handleSubmit" />
+      <Side :onsubmit="handleSubmit" />
     </div>
     <div class="content">
       <a-table
         bordered="true"
         :columns="columns"
-        :rowKey="record => record.login.uuid"
+        :rowKey="record => record.id"
         :dataSource="data"
         :pagination="pagination"
         :loading="loading"
@@ -25,31 +25,9 @@ import { mapGetters, mapState } from "vuex";
 import moment, { weekdays } from "moment";
 import Side from "components/side";
 
-import { site } from "api/index";
+import api from "api/index";
 
-const columns = [
-  {
-    title: "餐厅名称",
-    dataIndex: "name",
-    sorter: true,
-    width: "20%",
-    scopedSlots: { customRender: "name" }
-  },
-  {
-    title: "营业时间(周日)",
-    dataIndex: "gender",
-    filters: [
-      { text: "Male", value: "male" },
-      { text: "Female", value: "female" }
-    ],
-    width: "20%"
-  },
-  {
-    title: "Email",
-    dataIndex: "email"
-  }
-];
-
+const zhNum = ["", "一", "二", "三", "四", "五", "六", "日"];
 export default {
   name: "App",
   components: {
@@ -65,29 +43,76 @@ export default {
         pageSize: 10,
         total: 0
       },
-      loading: false,
-      columns
+      loading: false
     };
   },
+  computed: {
+    columns() {
+      let { weekday } = this;
+      return [
+        {
+          title: "餐厅名称",
+          dataIndex: "name"
+        },
+        {
+          title: `营业时间(周${zhNum[weekday]})`,
+          dataIndex: `day${weekday}`
+        },
+        {
+          title: "类型",
+          dataIndex: "type"
+        },
+        {
+          title: "米其林星",
+          dataIndex: "star"
+        },
+        {
+          title: "停车",
+          dataIndex: "park"
+        },
+        {
+          title: "外送",
+          dataIndex: "takeout"
+        },
+        {
+          title: "先缴定金",
+          dataIndex: "deposit"
+        },
+        {
+          title: "评价",
+          dataIndex: "score"
+        }
+      ];
+    }
+  },
   methods: {
-    async handleSubmit(weekday, time) {
-      let result = await this.fetchData(weekday, time);
+    handleSubmit(weekday, time) {
+      this.weekday = weekday;
+      this.time = time;
+      this.fetchData(weekday, time);
     },
-    async handleTableChange(pagination, filters, sorter) {
-      let { weekday, time } = this.data;
+    handleTableChange(pagination, filters, sorter) {
+      let { weekday, time } = this;
       let { current } = pagination;
-      let result = await this.fetchData(weekday, time, current);
+      this.fetchData(weekday, time, current);
     },
     async fetchData(weekday, time, page = 1) {
-      console.log(site);
-      return await site.search(weekday, time, page);
+      this.loading = true;
+      let { data } = await api.site.search(weekday, time, page);
+      this.loading = false;
+      this.data = data.result;
+      this.pagination = {
+        current: data.page,
+        pageSize: 10,
+        total: data.total
+      };
     }
   },
   async created() {
     let date = moment(Date());
-    this.data.weekday = date.weekday();
-    this.data.time = date.format("HH:mm:ss");
-    let result = await this.fetchData(this.data.weekday, this.data.time, 1);
+    this.weekday = date.weekday() + 1;
+    this.time = date.format("HH:mm:ss");
+    this.fetchData(this.weekday, this.time, 1);
   },
   mounted: () => {}
 };

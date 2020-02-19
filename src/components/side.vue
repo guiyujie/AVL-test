@@ -4,7 +4,7 @@
       <a-date-picker
         showTime
         format="YYYY-MM-DD HH:mm:ss"
-        placeholder="Select Time"
+        placeholder="请选择用餐时间"
         @change="onChange"
         @ok="onOk"
         v-decorator="[
@@ -22,6 +22,9 @@
 <script>
 import Vue from "vue";
 export default {
+  props: {
+    onsubmit: Function
+  },
   data() {
     return {
       formLayout: "horizontal",
@@ -30,14 +33,13 @@ export default {
   },
   methods: {
     handleSubmit(e) {
-      let { onSubmit } = this.props;
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          let weekday = values.datetime.weekday();
+          let weekday = values.datetime.weekday() + 1;
           let value = values.datetime.format("YYYY-MM-DD HH:mm:ss");
           let time = value.split(" ")[1];
-          onSubmit && onSubmit(weekday, time, value);
+          this.onsubmit && this.onsubmit(weekday, time, value);
         }
       });
     }

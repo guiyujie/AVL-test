@@ -21,6 +21,9 @@ Vue.use(VueLazyload)
 //添加router
 import router from "./route"
 
+//warn
+Vue.config.silent = true
+
 
 new Vue({
   i18n,
